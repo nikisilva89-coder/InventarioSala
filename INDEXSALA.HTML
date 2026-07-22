@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#16202C">
+<title>Sala D23</title>
+<style>
+  :root{
+    --papel:#EEF1F4;
+    --tarjeta:#FFFFFF;
+    --tinta:#16202C;
+    --tenue:#6A7885;
+    --linea:#DCE2E8;
+    --azul:#2B5CAD;
+    --hay:#147A4B;
+    --poco:#D98A00;
+    --critico:#E05A1B;
+    --nada:#C62E22;
+    --radio:14px;
+    --ancho:1180px;
+  }
+
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:var(--papel);
+    color:var(--tinta);
+    padding-bottom:48px;
+  }
+
+  .marco{max-width:var(--ancho);margin:0 auto;padding:0 24px}
+
+  /* ── Encabezado ───────────────────────────── */
+  header{
+    background:var(--tinta);
+    color:#fff;
+    padding:16px 0 calc(16px);
+    padding-top:calc(16px + env(safe-area-inset-top));
+  }
+  header .marco{display:flex;align-items:baseline;justify-content:space-between;gap:16px}
+  header h1{font-size:19px;margin:0;letter-spacing:.6px;font-weight:700}
+  header h1 span{opacity:.5;font-weight:400}
+  header .pie{font-size:12.5px;color:rgba(255,255,255,.55)}
+
+  /* ── Buscador ─────────────────────────────── */
+  .buscador{
+    position:sticky;top:0;z-index:10;
+    background:var(--papel);
+    border-bottom:1px solid var(--linea);
+    padding:18px 0 14px;
+  }
+  #busqueda{
+    width:100%;
+    padding:17px 20px;
+    font-size:19px;
+    font-family:inherit;
+    border:2px solid var(--linea);
+    border-radius:var(--radio);
+    background:#fff;color:var(--tinta);
+  }
+  #busqueda::placeholder{color:#9AA6B2}
+  #busqueda:focus{outline:3px solid var(--azul);outline-offset:1px;border-color:var(--azul)}
+
+  /* ── Grilla de resultados ─────────────────── */
+  main{padding-top:18px}
+  #lista{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(330px,1fr));
+    gap:12px;
+    align-items:start;
+  }
+  #lista.centrado{display:block}
+
+  .item{
+    display:flex;
+    background:var(--tarjeta);
+    border-radius:var(--radio);
+    overflow:hidden;
+    box-shadow:0 1px 2px rgba(22,32,44,.09);
+  }
+  .banda{width:9px;flex:0 0 9px}
+  .banda.hay{background:var(--hay)}
+  .banda.poco{background:var(--poco)}
+  .banda.critico{background:var(--critico)}
+  .banda.nada{background:var(--nada)}
+
+  .cuerpo{flex:1;padding:14px 16px;min-width:0}
+  .nombre{
+    font-size:15px;font-weight:600;line-height:1.34;
+    margin:0 0 10px;word-break:break-word;
+  }
+  .fila{display:flex;align-items:flex-end;gap:14px}
+
+  .cifra{
+    font-size:44px;font-weight:800;line-height:.9;
+    font-variant-numeric:tabular-nums;letter-spacing:-1.8px;
+  }
+  .cifra.hay{color:var(--hay)}
+  .cifra.poco{color:var(--poco)}
+  .cifra.critico{color:var(--critico)}
+  .cifra.nada{color:var(--nada)}
+
+  .meta{font-size:12px;color:var(--tenue);padding-bottom:6px;line-height:1.45}
+  .meta b{display:block;font-size:13px;color:var(--tinta);font-weight:600}
+
+  .avisos{
+    display:flex;gap:8px;margin-top:12px;padding-top:12px;
+    border-top:1px solid var(--linea);
+  }
+  .avisos button{
+    flex:1;padding:11px 8px;font-size:13px;font-weight:600;font-family:inherit;
+    border:1.5px solid var(--linea);background:#fff;color:var(--tinta);
+    border-radius:10px;cursor:pointer;transition:background .12s;
+  }
+  .avisos button:hover:not(:disabled){background:#F4F7FA}
+  .avisos button:active{transform:scale(.97)}
+  .avisos button:focus-visible{outline:3px solid var(--azul);outline-offset:1px}
+  .avisos button.rojo{border-color:var(--nada);color:var(--nada)}
+  .avisos button.rojo:hover:not(:disabled){background:#FDF2F1}
+  .avisos button.listo{background:var(--hay);border-color:var(--hay);color:#fff}
+
+  /* ── Mensajes ─────────────────────────────── */
+  .vacio{
+    text-align:center;padding:70px 24px;color:var(--tenue);
+    font-size:15.5px;line-height:1.6;
+  }
+  .vacio strong{display:block;color:var(--tinta);font-size:19px;margin-bottom:8px}
+
+  /* ── Entrada ──────────────────────────────── */
+  .portada{max-width:400px;margin:0 auto;padding:90px 24px;text-align:center}
+  .portada h2{font-size:30px;margin:0 0 8px;letter-spacing:-.6px}
+  .portada p{color:var(--tenue);margin:0 0 32px;font-size:15.5px;line-height:1.5}
+  .campo{margin-bottom:14px;text-align:left}
+  .campo label{
+    display:block;font-size:12px;font-weight:700;color:var(--tenue);
+    text-transform:uppercase;letter-spacing:.7px;margin-bottom:7px;
+  }
+  .campo input{
+    width:100%;padding:15px;font-size:17px;font-family:inherit;
+    border:2px solid var(--linea);border-radius:var(--radio);
+    background:#fff;color:var(--tinta);
+  }
+  .campo input:focus{outline:3px solid var(--azul);outline-offset:1px;border-color:var(--azul)}
+  .principal{
+    width:100%;padding:16px;font-size:17px;font-weight:700;font-family:inherit;
+    background:var(--azul);color:#fff;border:0;border-radius:var(--radio);
+    cursor:pointer;margin-top:6px;
+  }
+  .principal:hover{background:#24509A}
+  .principal:active{transform:scale(.98)}
+  .error{
+    background:#FDEBE9;color:#9B241B;padding:12px 14px;border-radius:10px;
+    font-size:13.5px;margin-top:16px;display:none;text-align:left;line-height:1.45;
+  }
+  .error.ver{display:block}
+
+  /* ── Aviso flotante ───────────────────────── */
+  #toast{
+    position:fixed;left:50%;bottom:26px;
+    transform:translateX(-50%) translateY(140%);
+    background:var(--tinta);color:#fff;
+    padding:14px 26px;border-radius:99px;
+    font-size:14.5px;font-weight:600;
+    box-shadow:0 8px 24px rgba(22,32,44,.28);
+    transition:transform .28s cubic-bezier(.2,.8,.3,1);
+    z-index:50;max-width:88vw;text-align:center;
+  }
+  #toast.ver{transform:translateX(-50%) translateY(0)}
+
+  .oculto{display:none !important}
+
+  /* ── Celular ──────────────────────────────── */
+  @media (max-width:640px){
+    .marco{padding:0 14px}
+    header h1{font-size:17px}
+    header .pie{display:none}
+    #busqueda{padding:15px 16px;font-size:17px}
+    #lista{grid-template-columns:1fr;gap:10px}
+    .cifra{font-size:38px}
+    .portada{padding:56px 20px}
+    .portada h2{font-size:26px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important}
+    .avisos button:active,.principal:active{transform:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ENTRADA -->
+<div id="portada" class="portada">
+  <h2>Sala D23</h2>
+  <p>Consulta el stock y avisa cuando algo se acabe.</p>
+
+  <div class="campo">
+    <label for="clave">Contraseña</label>
+    <input id="clave" type="password" autocomplete="off" autofocus>
+  </div>
+
+  <button class="principal" onclick="entrar()">Entrar</button>
+  <div id="errorEntrada" class="error"></div>
+</div>
+
+<!-- APP -->
+<div id="app" class="oculto">
+  <header>
+    <div class="marco">
+      <h1>SALA <span>D23</span></h1>
+      <div class="pie">Los avisos quedan registrados en la hoja QUIEBRES</div>
+    </div>
+  </header>
+
+  <div class="buscador">
+    <div class="marco">
+      <input id="busqueda" placeholder="Buscar producto…" autocomplete="off"
+             enterkeyhint="search">
+    </div>
+  </div>
+
+  <main class="marco">
+    <div id="lista" class="centrado">
+      <div class="vacio">
+        <strong>¿Qué estás buscando?</strong>
+        Escribe parte del nombre del producto.
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════════
+   Pega aquí la URL de tu Apps Script (termina en /exec)
+   ══════════════════════════════════════════════ */
+const API = 'https://script.google.com/macros/s/AKfycby1VnfJte_bFh11Hge0fzgeKjun3t_X2ZuAZCXpvGCm61i_jmKuqsGD0w8jf2Ajn1CF/exec';
+
+let CLAVE = '';
+let ultimos = [];
+let temporizador = null;
+let contador = 0;
+
+/* ── Conexión (JSONP) ───────────────────────── */
+function pedir(params){
+  return new Promise(function(resolve, reject){
+    const nombreCb = 'cbSala_' + (++contador);
+    const script = document.createElement('script');
+    const corte = setTimeout(function(){
+      limpiar(); reject(new Error('El servidor no respondió'));
+    }, 20000);
+
+    function limpiar(){
+      clearTimeout(corte);
+      delete window[nombreCb];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    window[nombreCb] = function(d){ limpiar(); resolve(d); };
+    script.onerror = function(){ limpiar(); reject(new Error('Sin conexión')); };
+
+    const qs = Object.keys(params).map(function(k){
+      return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
+    }).join('&');
+
+    script.src = API + '?callback=' + nombreCb + '&' + qs;
+    document.body.appendChild(script);
+  });
+}
+
+/* ── Entrada ────────────────────────────────── */
+function entrar(){
+  const clave = document.getElementById('clave').value;
+  const err   = document.getElementById('errorEntrada');
+
+  err.textContent = 'Conectando…';
+  err.className = 'error ver';
+
+  pedir({ accion:'buscar', pass:clave, q:'zz' }).then(function(r){
+    if (r.error){
+      err.textContent = 'Contraseña incorrecta.';
+      return;
+    }
+    CLAVE = clave;
+    document.getElementById('portada').classList.add('oculto');
+    document.getElementById('app').classList.remove('oculto');
+    document.getElementById('busqueda').focus();
+  }).catch(function(e){
+    err.textContent = e.message + '. Revisa la conexión e intenta de nuevo.';
+  });
+}
+
+document.getElementById('clave').addEventListener('keydown', function(e){
+  if (e.key === 'Enter') entrar();
+});
+
+/* ── Búsqueda ───────────────────────────────── */
+document.getElementById('busqueda').addEventListener('input', function(){
+  clearTimeout(temporizador);
+  const q = this.value;
+
+  if (q.trim().length < 2){ pintar(null); return; }
+
+  temporizador = setTimeout(function(){
+    pedir({ accion:'buscar', pass:CLAVE, q:q }).then(function(r){
+      pintar(r.productos || []);
+    }).catch(function(e){
+      const l = document.getElementById('lista');
+      l.className = 'centrado';
+      l.innerHTML = '<div class="vacio"><strong>No se pudo buscar</strong>' +
+                    escapar(e.message) + '. Revisa la conexión.</div>';
+    });
+  }, 320);
+});
+
+function escapar(s){
+  return String(s).replace(/[<>&"]/g, function(c){
+    return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];
+  });
+}
+
+const ETIQUETA = {
+  hay:'En stock', poco:'Queda poco',
+  critico:'Casi sin stock', nada:'Sin stock'
+};
+
+function pintar(lista){
+  const cont = document.getElementById('lista');
+
+  if (lista === null){
+    cont.className = 'centrado';
+    cont.innerHTML = '<div class="vacio"><strong>¿Qué estás buscando?</strong>' +
+                     'Escribe parte del nombre del producto.</div>';
+    return;
+  }
+  if (!lista.length){
+    cont.className = 'centrado';
+    cont.innerHTML = '<div class="vacio"><strong>Sin resultados</strong>' +
+                     'Prueba con otra palabra del nombre.</div>';
+    return;
+  }
+
+  ultimos = lista;
+  cont.className = '';
+  cont.innerHTML = lista.map(function(p, i){
+    return '<article class="item">' +
+      '<div class="banda ' + p.e + '"></div>' +
+      '<div class="cuerpo">' +
+        '<p class="nombre">' + escapar(p.n) + '</p>' +
+        '<div class="fila">' +
+          '<div class="cifra ' + p.e + '">' + p.s + '</div>' +
+          '<div class="meta"><b>' + ETIQUETA[p.e] + '</b>' +
+            (p.f ? 'Contado el ' + p.f : '') + '</div>' +
+        '</div>' +
+        '<div class="avisos">' +
+          '<button onclick="avisar(' + i + ',\'sala\',this)">Falta en sala</button>' +
+          '<button class="rojo" onclick="avisar(' + i + ',\'total\',this)">No queda nada</button>' +
+        '</div>' +
+      '</div>' +
+    '</article>';
+  }).join('');
+}
+
+/* ── Avisos ─────────────────────────────────── */
+function avisar(i, tipo, boton){
+  const p = ultimos[i];
+  if (!p) return;
+
+  boton.disabled = true;
+  const original = boton.textContent;
+  boton.textContent = 'Enviando…';
+
+  pedir({ accion:'quiebre', pass:CLAVE, producto:p.n, tipo:tipo })
+  .then(function(r){
+    if (r.error) throw new Error(r.error);
+    boton.textContent = 'Avisado';
+    boton.className = 'listo';
+    toast(tipo === 'sala' ? 'Aviso enviado a bodega'
+                          : 'Anotado para el próximo pedido');
+  }).catch(function(){
+    boton.disabled = false;
+    boton.textContent = original;
+    toast('No se pudo enviar. Intenta de nuevo.');
+  });
+}
+
+let toastTimer = null;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('ver');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.classList.remove('ver'); }, 2600);
+}
+</script>
+</body>
+</html>
